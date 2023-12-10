@@ -2,7 +2,9 @@ package ch3b_usermanagement_rodriguezmar;
 
 import java.io.IOException;
 import javafx.application.Application;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -40,11 +42,8 @@ public class Main extends Application {
         stage.show();
     }
     
-    public void closeWindow(String fxml) throws IOException{
-//        Parent root = FXMLLoader.load(getClass().getResource(fxml));
-//        Stage stage = new Stage();
-//        Scene scene = new Scene(root);
-//        stage.setScene(scene);
-//        stage.close();
+    public void closeWindow(ActionEvent event){
+        Stage stage = (Stage)((Node) event.getSource()).getScene().getWindow();
+        stage.close();
     }
 }

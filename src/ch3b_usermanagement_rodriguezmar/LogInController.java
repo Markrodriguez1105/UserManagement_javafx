@@ -42,18 +42,20 @@ public class LogInController implements Initializable {
 
     @FXML
     private void userLogIn(ActionEvent event) throws IOException {
-        if(dropBox.getSelectionModel().getSelectedItem().equals("RESIDENT") && userName.getText().equals(sampleUsername) && password.getText().equals(samplePassword)){
-            Main main = new Main();
-            main.overlayWindow("Admin.fxml");
-        }else if(dropBox.getSelectionModel().getSelectedItem().equals("ADMIN") && userName.getText().equals(sampleUsername) && password.getText().equals(samplePassword)){
+//        if(dropBox.getSelectionModel().getSelectedItem().equals("RESIDENT") && userName.getText().equals(sampleUsername) && password.getText().equals(samplePassword)){
+//            Main main = new Main();
+//            main.overlayWindow("Admin.fxml");
+//        }else if(dropBox.getSelectionModel().getSelectedItem().equals("ADMIN") && userName.getText().equals(sampleUsername) && password.getText().equals(samplePassword)){
+//            Main main = new Main();
+//            main.changeScene("Admin.fxml");
+//        } else if(userName.getText().isEmpty() || password.getText().isEmpty()){
+//            indicator.setText("Please Enter your Username and Password");
+//            indicator.setTextFill(Color.RED);
+//        }else{
+//            indicator.setText("Wrong Username and Password");
+//            indicator.setTextFill(Color.RED);
+//        }
             Main main = new Main();
             main.changeScene("Admin.fxml");
-        } else if(userName.getText().isEmpty() || password.getText().isEmpty()){
-            indicator.setText("Please Enter your Username and Password");
-            indicator.setTextFill(Color.RED);
-        }else{
-            indicator.setText("Wrong Username and Password");
-            indicator.setTextFill(Color.RED);
-        }
     }
 }

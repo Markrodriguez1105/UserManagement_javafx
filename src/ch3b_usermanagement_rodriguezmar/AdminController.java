@@ -14,6 +14,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import java.sql.*;
+import javafx.collections.FXCollections;
 
 /**
  * FXML Controller class
@@ -21,11 +23,13 @@ import javafx.scene.control.cell.PropertyValueFactory;
  * @author Hello Mark
  */
 public class AdminController implements Initializable {
-    
+
+    Database database = new Database();
+
     @FXML
     private TableColumn<Information, Integer> count;
     @FXML
-    private TableColumn<Information, String> residentID;
+    private TableColumn<Information, Integer> residentID;
     @FXML
     private TableColumn<Information, String> username;
     @FXML
@@ -41,36 +45,35 @@ public class AdminController implements Initializable {
     @FXML
     private TableColumn<Information, String> status;
     @FXML
-    public TableView<Information> table;
+    private TableView<Information> table = new TableView<>();
+
+    static ObservableList<Information> informations;
 
     /**
      * Initializes the controller class.
      */
-    private int counting = 0;
-    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
-        count.setCellValueFactory(new PropertyValueFactory<>("count"));
-        residentID.setCellValueFactory(new PropertyValueFactory<>("residentID"));
-        username.setCellValueFactory(new PropertyValueFactory<>("username"));
-        password.setCellValueFactory(new PropertyValueFactory<>("password"));
-        firstName.setCellValueFactory(new PropertyValueFactory<>("firstName"));
-        middleName.setCellValueFactory(new PropertyValueFactory<>("middleName"));
-        lastName.setCellValueFactory(new PropertyValueFactory<>("lastName"));
-        token.setCellValueFactory(new PropertyValueFactory<>("token"));
-        status.setCellValueFactory(new PropertyValueFactory<>("status"));
-    }    
+        this.count.setCellValueFactory(new PropertyValueFactory<>("count"));
+        this.residentID.setCellValueFactory(new PropertyValueFactory<>("residentID"));
+        this.username.setCellValueFactory(new PropertyValueFactory<>("username"));
+        this.password.setCellValueFactory(new PropertyValueFactory<>("password"));
+        this.firstName.setCellValueFactory(new PropertyValueFactory<>("firstName"));
+        this.middleName.setCellValueFactory(new PropertyValueFactory<>("middleName"));
+        this.lastName.setCellValueFactory(new PropertyValueFactory<>("lastName"));
+        this.token.setCellValueFactory(new PropertyValueFactory<>("token"));
+        this.status.setCellValueFactory(new PropertyValueFactory<>("status"));
+
+        informations = table.getItems();
+        informations.addAll(database.getListInfo());
+        table.setItems(informations);
+
+    }
 
     @FXML
     private void add(ActionEvent event) throws IOException {
         Main main = new Main();
         main.overlayWindow("Add.fxml");
-//        counting++;
-//        Information info = new Information(counting, "1234", "Markmark", "1234", "Rodriguez", "Mark Anthony", "Amican", "Resident", "Active");
-//        ObservableList<Information> informations = table.getItems();
-//        informations.add(info);
-//        table.setItems(informations);
     }
 
     @FXML
@@ -79,10 +82,20 @@ public class AdminController implements Initializable {
 
     @FXML
     private void remove(ActionEvent event) {
+        table.selectionModelProperty();
     }
 
     @FXML
-    private void logOut(ActionEvent event) {
+    private void logOut(ActionEvent event) throws IOException {
+        Main main = new Main();
+        main.changeScene("LogIn.fxml");
     }
-    
+
+    public void setTable() {
+
+        informations.clear();
+        informations.addAll(database.getListInfo());
+        table.setItems(informations);
+    }
+
 }
