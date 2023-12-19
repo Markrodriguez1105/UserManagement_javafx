@@ -10,6 +10,8 @@ import javafx.scene.control.TableView;
 
 public class Database {
     
+    Encryption encryp = new Encryption();
+    
     public Connection connectDb() {
         Connection connect;
         try {
@@ -32,24 +34,26 @@ public class Database {
             prep = connect.createStatement();
             result = prep.executeQuery("SELECT * FROM user_info");
             while (result.next()) {
-                Information info = new Information(result.getInt("#"), result.getInt("residentID"), result.getString("username"), result.getString("password"), result.getString("lname"), result.getString("fname"), result.getString("mname"), result.getByte("token"), result.getBoolean("status"));
+                Information info = new Information(result.getInt("residentID"), result.getString("username"), result.getString("password"), result.getString("lname"), result.getString("fname"), result.getString("mname"), encryp.DecryptionToken(result.getByte("token")), encryp.DecryptionStatus(result.getBoolean("status")));
                 list.add(info);
-                System.out.println(info.getFirstName() + " Added");
             }
-            
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        FXCollections.sort(list, Comparator.comparingInt(Information::getCount));
+        FXCollections.sort(list, Comparator.comparing(Information::getLastName));
         return list;
     }
     
     public void insertNewInfo(int residentID, String username, String password, String lastName, String firstName, String middleName, byte token, boolean status){
-        String query = String.format("INSERT INTO user_info VALUES (%s, %s,'%s','%s','%s','%s','%s',%s,%s)",getMaxIndex() + 1, residentID, username, password, firstName, middleName, lastName, token, status);
-        insertToDatabase(query);
-        
+        String query = String.format("INSERT INTO user_info VALUES (%s,'%s','%s','%s','%s','%s',%s,%s)",residentID, username, password, firstName, middleName, lastName, token, status);
+        executeQuery(query);
     }
-    public void insertToDatabase(String query){
+    
+    public void updateInfo(int residentID, String username, String password, String lastName, String firstName, String middleName, byte token, boolean status){
+        executeQuery(String.format("UPDATE `user_info` SET `residentID`= %s,`username`='%s',`password`='%s',`fname`='%s',`mname`='%s',`lname`='%s',`token`='%s',`status`='%s' WHERE `residentID = %s", residentID, username, password, firstName, middleName, lastName, token, status, residentID));
+    }
+    
+    void executeQuery(String query){
         Connection connect = connectDb();
         Statement prep;
         
@@ -73,20 +77,5 @@ public class Database {
             System.out.println(e.getMessage());
         }
         return result;
-    }
-    
-    public int getMaxIndex(){
-        int count = 0;
-        try {
-            ResultSet result = getFromDatabase("SELECT MAX(`#`) AS max_value FROM user_info");
-            if (result.next()) {
-                count = result.getInt("max_value");
-                System.out.println(count);
-                System.out.println("passed this");
-            }
-        } catch (SQLException ex) {
-            System.out.println(ex.getMessage());
-        }
-        return count;
     }
 }

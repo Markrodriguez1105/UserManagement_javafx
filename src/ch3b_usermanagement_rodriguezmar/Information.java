@@ -1,13 +1,10 @@
 package ch3b_usermanagement_rodriguezmar;
 
 public class Information {
-    byte token;
-    private int count, residentID;
-    private String username, password, lastName, firstName, middleName;
-    boolean status;
-    
-    public Information(int count, int residentID, String username, String password, String lastName, String firstName, String middleName, byte token, boolean status) {
-        this.count = count;
+    private int residentID;
+    private String username, password, lastName, firstName, middleName, token, status;
+
+    public Information(int residentID, String username, String password, String lastName, String firstName, String middleName, String token, String status) {
         this.residentID = residentID;
         this.username = username;
         this.password = password;
@@ -16,14 +13,6 @@ public class Information {
         this.middleName = middleName;
         this.token = token;
         this.status = status;
-    }
-
-    public int getCount() {
-        return count;
-    }
-
-    public void setCount(int count) {
-        this.count = count;
     }
 
     public int getResidentID() {
@@ -74,19 +63,19 @@ public class Information {
         this.middleName = middleName;
     }
 
-    public byte getToken() {
+    public String getToken() {
         return token;
     }
 
-    public void setToken(byte token) {
+    public void setToken(String token) {
         this.token = token;
     }
 
-    public boolean getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(boolean status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 }

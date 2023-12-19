@@ -65,9 +65,8 @@
       <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
    </padding>
    <center>
-      <TableView fx:id="table" prefHeight="454.0" prefWidth="840.0" BorderPane.alignment="CENTER">
+      <TableView fx:id="table" prefHeight="363.0" prefWidth="840.0" BorderPane.alignment="CENTER">
         <columns>
-          <TableColumn fx:id="count" prefWidth="75.0" text="#" />
           <TableColumn fx:id="residentID" prefWidth="86.00000762939453" text="Resident ID" />
             <TableColumn fx:id="username" prefWidth="98.4444580078125" text="Username" />
             <TableColumn fx:id="password" prefWidth="100.66668701171875" text="Password" />

@@ -2,8 +2,11 @@ package ch3b_usermanagement_rodriguezmar;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.Random;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -21,7 +24,7 @@ import javafx.stage.Stage;
  * @author Hello Mark
  */
 public class AddController implements Initializable {
-
+    
     @FXML
     private TextField inputFirstname;
     @FXML
@@ -38,13 +41,13 @@ public class AddController implements Initializable {
     @FXML
     private ComboBox<String> inputStatus;
     
-    Database database = new Database();
-    AdminController admin = new AdminController();
-    Main main = new Main();
     Encryption encryp = new Encryption();
 
     /**
      * Initializes the controller class.
+     *
+     * @param url
+     * @param rb
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -53,19 +56,24 @@ public class AddController implements Initializable {
         inputToken.setItems(FXCollections.observableArrayList("RESIDENT", "ADMIN"));
         inputStatus.setValue("ACTIVE");
         inputStatus.setItems(FXCollections.observableArrayList("ACTIVE", "INACTIVE"));
-    }    
-
+    }
+    
     @FXML
     private void add(ActionEvent event) {
+        Information newInfo = new Information(residentIDgenerator(),
+                inputUsername.getText(), inputPassword.getText(),
+                inputLastname.getText(), inputFirstname.getText(), inputMiddlename.getText(),
+                inputToken.getSelectionModel().getSelectedItem(), inputStatus.getSelectionModel().getSelectedItem());
+        AdminController.residents.add(newInfo);
+        AdminController.add.add(newInfo);
         
-        database.insertNewInfo(residentIDgenerator(), 
-                inputUsername.getText(), inputPassword.getText(), 
-                inputLastname.getText(), inputFirstname.getText(), inputMiddlename.getText(), 
-                encryp.ecryptionToken(inputToken.getSelectionModel().getSelectedItem()), encryp.ecryptionStatus(inputStatus.getSelectionModel().getSelectedItem()));
+        AdminController admin = new AdminController();
         admin.setTable();
+        
+        Main main = new Main();
         main.closeWindow(event);
     }
-
+    
     @FXML
     private void reset(ActionEvent event) {
         inputFirstname.setText("");
@@ -76,15 +84,27 @@ public class AddController implements Initializable {
         inputToken.setValue("RESIDENT");
         inputStatus.setValue("ACTIVE");
     }
-
+    
     @FXML
     private void cancel(ActionEvent event) {
-        Stage stage = (Stage)((Node) event.getSource()).getScene().getWindow();
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.close();
     }
     
-    int residentIDgenerator(){
+    int residentIDgenerator() {
+        Database database = new Database();
         Random ran = new Random();
-        return ran.nextInt(9999 - 1 + 1) + 1;
+        int random = 0;
+        boolean repeat = true;
+        try {
+            while (repeat) {                
+                random = ran.nextInt(9999 - 1 + 1) + 1;
+                System.out.println(random);
+                repeat = database.getFromDatabase(String.format("SELECT `residentID` FROM `user_info` WHERE `residentID` = %s", random)).next();
+            }
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+        return random;
     }
 }
