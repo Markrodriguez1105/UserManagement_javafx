@@ -38,6 +38,7 @@ public class Main extends Application {
         Stage stage = new Stage();
         Scene scene = new Scene(root);
         stage.setTitle(fxml.substring(0, fxml.length()-5));
+        stage.alwaysOnTopProperty();
         stage.setScene(scene);
         stage.show();
     }

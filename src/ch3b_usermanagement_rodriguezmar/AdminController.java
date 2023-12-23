@@ -51,7 +51,7 @@ public class AdminController implements Initializable {
     static ObservableList<Information> updates = FXCollections.observableArrayList();
     static ObservableList<Information> deletion = FXCollections.observableArrayList();
     static ObservableList<Information> residents;
-    
+
     //Object for encrption on token and status
     Encryption encryp = new Encryption();
 
@@ -92,8 +92,7 @@ public class AdminController implements Initializable {
         } catch (Exception e) {
             System.out.println("null");
         }
-        
-        
+
     }
 
     @FXML
@@ -106,21 +105,26 @@ public class AdminController implements Initializable {
     }
 
     @FXML
-    private void logOut(ActionEvent event) throws IOException, SQLException {
-        for(Information info : deletion){
-            database.executeQuery(String.format("DELETE FROM `user_info` WHERE `residentID` = %s", info.getResidentID()));
-        }
-        for(Information info : updates){
-            ResultSet result = database.getFromDatabase(String.format("SELECT * FROM `user_info` WHERE `residentID` = %s", info.getResidentID()));
-            while(result.next()){
-                database.executeQuery(String.format("UPDATE `user_info` SET `residentID`= %s,`username`='%s',`password`='%s',`fname`='%s',`mname`='%s',`lname`='%s',`token`=%s,`status`=%s WHERE `residentID` = %s", info.getResidentID(), info.getUsername(), info.getPassword(), info.getLastName(), info.getFirstName(), info.getMiddleName(), encryp.ecryptionToken(info.getToken()), encryp.ecryptionStatus(info.getStatus()), info.getResidentID()));
+    private void logOut(ActionEvent event) throws IOException {
+        try {
+            for (Information info : deletion) {
+                database.executeQuery(String.format("DELETE FROM `user_info` WHERE `residentID` = %s", info.getResidentID()));
             }
+            for (Information info : updates) {
+                ResultSet result = database.getFromDatabase(String.format("SELECT * FROM `user_info` WHERE `residentID` = %s", info.getResidentID()));
+                while (result.next()) {
+                    database.executeQuery(String.format("UPDATE `user_info` SET `residentID`= %s,`username`='%s',`password`='%s',`fname`='%s',`mname`='%s',`lname`='%s',`token`=%s,`status`=%s WHERE `residentID` = %s", info.getResidentID(), info.getUsername(), info.getPassword(), info.getFirstName(), info.getMiddleName(),info.getLastName(), encryp.ecryptionToken(info.getToken()), encryp.ecryptionStatus(info.getStatus()), info.getResidentID()));
+                }
+            }
+            for (Information info : add) {
+                database.insertNewInfo(info.getResidentID(), info.getUsername(), info.getPassword(), info.getLastName(), info.getFirstName(), info.getMiddleName(), encryp.ecryptionToken(info.getToken()), encryp.ecryptionStatus(info.getStatus()));
+            }
+            Main main = new Main();
+            main.changeScene("LogIn.fxml");
+        } catch (Exception e) {
+            Main main = new Main();
+            main.changeScene("LogIn.fxml");
         }
-        for(Information info : add){
-            database.insertNewInfo(info.getResidentID(), info.getUsername(), info.getPassword(), info.getLastName(), info.getFirstName(), info.getMiddleName(), encryp.ecryptionToken(info.getToken()), encryp.ecryptionStatus(info.getStatus()));
-        }
-        Main main = new Main();
-        main.changeScene("LogIn.fxml");
     }
 
     public void setTable() {

@@ -99,7 +99,6 @@ public class AddController implements Initializable {
         try {
             while (repeat) {                
                 random = ran.nextInt(9999 - 1 + 1) + 1;
-                System.out.println(random);
                 repeat = database.getFromDatabase(String.format("SELECT `residentID` FROM `user_info` WHERE `residentID` = %s", random)).next();
             }
         } catch (Exception ex) {

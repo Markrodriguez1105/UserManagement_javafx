@@ -13,13 +13,14 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
+import java.sql.*;
 
 /**
  *
  * @author Hello Mark
  */
 public class LogInController implements Initializable {
-    
+
     private Label label;
     @FXML
     private ComboBox<String> dropBox;
@@ -29,33 +30,52 @@ public class LogInController implements Initializable {
     private TextField userName;
     @FXML
     private PasswordField password;
-    
-    String sampleUsername = "09637752208" , samplePassword = "12345";
-    
-    
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
         dropBox.setValue("RESIDENT");
         dropBox.setItems(FXCollections.observableArrayList("RESIDENT", "ADMIN"));
-    }    
+    }
 
     @FXML
-    private void userLogIn(ActionEvent event) throws IOException {
-//        if(dropBox.getSelectionModel().getSelectedItem().equals("RESIDENT") && userName.getText().equals(sampleUsername) && password.getText().equals(samplePassword)){
-//            Main main = new Main();
-//            main.overlayWindow("Admin.fxml");
-//        }else if(dropBox.getSelectionModel().getSelectedItem().equals("ADMIN") && userName.getText().equals(sampleUsername) && password.getText().equals(samplePassword)){
-//            Main main = new Main();
-//            main.changeScene("Admin.fxml");
-//        } else if(userName.getText().isEmpty() || password.getText().isEmpty()){
-//            indicator.setText("Please Enter your Username and Password");
-//            indicator.setTextFill(Color.RED);
-//        }else{
-//            indicator.setText("Wrong Username and Password");
-//            indicator.setTextFill(Color.RED);
-//        }
-            Main main = new Main();
-            main.changeScene("Admin.fxml");
+    private void userLogIn(ActionEvent event) throws IOException, SQLException {
+        Database database = new Database();
+        Main main = new Main();
+        Encryption encryp = new Encryption();
+        ResultSet result = database.getFromDatabase(String.format("SELECT * FROM `user_info` WHERE `username` = '%s' AND `password` = '%s'", userName.getText(), password.getText()));
+        if (!userName.getText().isEmpty() || !password.getText().isEmpty()) {
+            indicator.setText("");
+            if (result.next()) {
+                if (result.getBoolean("status")) {
+                    if (result.getInt("token") == encryp.ecryptionToken(dropBox.getSelectionModel().getSelectedItem())) {
+                        switch (result.getInt("token")) {
+                            case 1 :
+                                ResidentController.residentID = result.getInt("residentID");
+                                main.changeScene("Resident.fxml");
+                                break;
+                            case 2 :
+                                main.changeScene("Admin.fxml");
+                                break;
+                            default :
+                                System.out.println("System Error, Please Restart The Program!");
+                        }
+                    }
+                    else{
+                        indicator.setText("Wrong Log In As, Username and Password!");
+                    }
+                }
+                else {
+                    indicator.setText("Deactiviated Account!");
+                }
+            }
+            else {
+                indicator.setText("Wrong Log In As, Username and Password!");
+            }
+        }
+        else {
+            indicator.setText("Please Input Your Username and Password!");
+        }
+
     }
 }
